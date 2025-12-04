@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronForge Gym</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo">IRONFORGE <span>GYM</span></div>
+        <div class="status-panel">
+            Vagas em Tempo Real: 
+            <span id="slots-display">A carregar...</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>CONSTRÓI A TUA <br><span>MELHOR VERSÃO</span></h1>
+        <p>Inscreve-te agora. As vagas são limitadas e desaparecem rápido.</p>
+    </section>
+
+    <section class="plans-container">
+        <div class="card">
+            <h3>BASIC</h3>
+            <div class="price">19.99€<span>/mês</span></div>
+            <ul>
+                <li>Acesso à Musculação</li>
+                <li>Horário Reduzido</li>
+                <li>Sem Fidelização</li>
+            </ul>
+            <button onclick="register('A')">INSCREVER (Plano A)</button>
+            <div class="slots-left" id="slot-a">Verificando...</div>
+        </div>
+
+        <div class="card popular">
+            <div class="badge">MAIS VENDIDO</div>
+            <h3>PRO</h3>
+            <div class="price">34.99€<span>/mês</span></div>
+            <ul>
+                <li>Livre Trânsito</li>
+                <li>Aulas de Grupo</li>
+                <li>Acesso Spa</li>
+            </ul>
+            <button onclick="register('B')">INSCREVER (Plano B)</button>
+            <div class="slots-left" id="slot-b">Verificando...</div>
+        </div>
+
+        <div class="card">
+            <h3>ELITE</h3>
+            <div class="price">59.99€<span>/mês</span></div>
+            <ul>
+                <li>Tudo Incluído</li>
+                <li>Personal Trainer (2x)</li>
+                <li>Toalhas e Nutrição</li>
+            </ul>
+            <button onclick="register('C')">INSCREVER (Plano C)</button>
+            <div class="slots-left" id="slot-c">Verificando...</div>
+        </div>
+    </section>
+
+    <div id="toast" class="toast">Mensagem aqui</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
