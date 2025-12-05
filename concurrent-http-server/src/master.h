@@ -12,5 +12,6 @@ void signal_handler(int signum);
 int create_server_socket(int port);
 void enqueue_connection(shared_data_t* data, semaphores_t* sems, int client_fd);
 // Adiciona esta linha junto aos outros protótipos
-void master_accept_loop(int listen_fd, shared_data_t* data, semaphores_t* sems);
+// Atualiza a assinatura
+void master_accept_loop(int listen_fd, shared_data_t* data, semaphores_t* sems, int ipc_socket);
 #endif

@@ -13,6 +13,7 @@ TARGET = server
 # Nota: Assume que criaste o src/main.c conforme o passo anterior
 SRCS = src/main.c \
        src/master.c \
+       src/ipc.c \
        src/worker.c \
        src/thread_pool.c \
        src/shared_mem.c \
