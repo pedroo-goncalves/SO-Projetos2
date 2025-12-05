@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include "shared_mem.h"
 #include "semaphores.h"
+#include "cache.h" // <--- Importante para cache_t
 
 // Nó da Fila Local (Linked List)
 typedef struct job_node {
@@ -28,18 +29,21 @@ typedef struct {
     void* args; 
 } thread_pool_t;
 
-// Argumentos passados às threads (agora mais simples)
+// Argumentos passados às threads
 typedef struct {
     thread_pool_t* pool;      
     shared_data_t* shared_data; 
     semaphores_t* sems;       
-    // IPC socket removido daqui, pois quem lê é o Dispatcher (worker_main)
+    cache_t* local_cache; // <--- Referência à Cache Local
 } thread_worker_args_t;
 
-thread_pool_t* create_thread_pool(int num_threads, shared_data_t* shm, semaphores_t* sems);
+// --- PROTOTIPO ATUALIZADO (4 Argumentos) ---
+thread_pool_t* create_thread_pool(int num_threads, shared_data_t* shm, semaphores_t* sems, cache_t* cache);
+// ------------------------------------------
+
 void destroy_thread_pool(thread_pool_t* pool);
 
-// Função nova para o Dispatcher enviar trabalho
+// Função para o Dispatcher enviar trabalho
 void thread_pool_submit(thread_pool_t* pool, int client_fd);
 
 #endif

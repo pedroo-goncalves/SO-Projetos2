@@ -39,9 +39,15 @@ void master_accept_loop(int listen_fd, shared_data_t* data, semaphores_t* sems, 
 
         printf("[Master] Nova conexao! FD: %d\n", client_fd); fflush(stdout);
 
-        // 2. PRODUCER
+        // 2. PRODUCER (Verificar espaço)
         if (sem_trywait(sems->empty_slots) == -1) {
             printf("[Master] Fila Cheia\n");
+            
+            // --- O QUE FALTAVA 1: Enviar resposta 503 ---
+            const char* msg = "503 Service Unavailable";
+            send_http_response(client_fd, 503, "Service Unavailable", "text/plain", msg, strlen(msg));
+            // --------------------------------------------
+            
             close(client_fd);
             continue;
         }
@@ -50,10 +56,20 @@ void master_accept_loop(int listen_fd, shared_data_t* data, semaphores_t* sems, 
         data->queue.count++;
         sem_post(sems->queue_mutex);
 
+        // --- O QUE FALTAVA 2: Atualizar Estatísticas ---
+        sem_wait(sems->stats_mutex);
+        data->stats.active_connections++; 
+        sem_post(sems->stats_mutex);
+        // -----------------------------------------------
+
         // 3. ENVIAR PARA O CANAL PARTILHADO
-        // Qualquer worker que acorde vai ler deste socket único
         if (send_fd(ipc_socket, client_fd) < 0) {
             perror("[Master] Erro send_fd");
+            // Se falhar o envio, temos de decrementar o que incrementámos
+            sem_wait(sems->stats_mutex);
+            data->stats.active_connections--;
+            sem_post(sems->stats_mutex);
+            sem_post(sems->empty_slots); 
         } else {
             sem_post(sems->filled_slots); // Acorda um worker
             printf("[Master] FD enviado para pool.\n"); fflush(stdout);

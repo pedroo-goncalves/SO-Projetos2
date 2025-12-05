@@ -16,7 +16,10 @@ void init_stats(shared_data_t* data) {
     data->stats.status_200 = 0;
     data->stats.status_404 = 0;
     data->stats.status_500 = 0;
+    data->stats.active_connections = 0;
     data->stats.total_response_time_ms = 0;
+    data->stats.cache_hits = 0;
+    data->stats.cache_misses = 0;
 }
 
 double get_current_time_ms() {
@@ -31,8 +34,7 @@ void* stats_monitor_thread(void* arg) {
     semaphores_t* sems = args->sems;
 
     while (1) {
-        // Espera 30 segundos (Requisito do PDF)
-        sleep(30);
+        sleep(10); // Atualiza a cada 10s (ou 30s como preferires)
 
         sem_wait(sems->stats_mutex);
         
@@ -44,19 +46,33 @@ void* stats_monitor_thread(void* arg) {
             avg_time = data->stats.total_response_time_ms / data->stats.total_requests;
         }
 
-        printf("\n=== SERVER STATISTICS ===\n");
+        // Cálculo da Cache Hit Rate
+        double cache_rate = 0.0;
+        long total_cache_ops = data->stats.cache_hits + data->stats.cache_misses;
+        if (total_cache_ops > 0) {
+            cache_rate = ((double)data->stats.cache_hits / total_cache_ops) * 100.0;
+        }
+
+        // Prevenção visual de negativos (caso raro)
+        int active = data->stats.active_connections;
+        if (active < 0) active = 0;
+
+        // Impressão Formatada (Exatamente como pedido)
+        printf("\n========================================\n");
+        printf("SERVER STATISTICS\n");
+        printf("========================================\n");
         printf("Uptime: %.0f seconds\n", uptime);
         printf("Total Requests: %ld\n", data->stats.total_requests);
+        printf("Successful (2xx): %ld\n", data->stats.status_200);
+        printf("Client Errors (4xx): %ld\n", data->stats.status_404);
+        printf("Server Errors (5xx): %ld\n", data->stats.status_500);
         printf("Bytes Transferred: %ld\n", data->stats.bytes_transferred);
-        printf("Active Connections: %d\n", data->stats.active_connections);
-        printf("Avg Response Time: %.2f ms\n", avg_time);
-        printf("Status Codes: [200: %ld] [404: %ld] [500: %ld]\n", 
-               data->stats.status_200, data->stats.status_404, data->stats.status_500);
-        printf("Vagas Ginásio: [A: %d] [B: %d] [C: %d]\n", 
-               data->slots_A, data->slots_B, data->slots_C);
-        printf("=========================\n\n");
+        printf("Average Response Time: %.1f ms\n", avg_time);
+        printf("Active Connections: %d\n", active);
+        printf("Cache Hit Rate: %.1f%%\n", cache_rate);
+        printf("========================================\n");
+        
         fflush(stdout);
-
         sem_post(sems->stats_mutex);
     }
     return NULL;

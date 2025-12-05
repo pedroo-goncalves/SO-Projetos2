@@ -10,11 +10,17 @@ typedef struct {
     long status_200;
     long status_404;
     long status_500;
+    
+    // Conexões Ativas (int para permitir correções)
     int active_connections;
     
-    // Novos campos para Feature 3
-    double total_response_time_ms; // Acumulador de tempo (para calcular média)
-    time_t server_start_time;      // Para calcular Uptime
+    // Stats de Tempo
+    double total_response_time_ms;
+    time_t server_start_time;
+    
+    // Stats de Cache (Novos)
+    long cache_hits;
+    long cache_misses;
 } server_stats_t;
 
 typedef struct {
@@ -32,6 +38,8 @@ typedef struct {
     int slots_A; 
     int slots_B;
     int slots_C;
+    
+    int next_booking_id;
 } shared_data_t;
 
 shared_data_t* create_shared_memory();

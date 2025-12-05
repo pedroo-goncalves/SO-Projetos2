@@ -2,9 +2,9 @@
 #define LOGGER_H
 
 #include <semaphore.h>
-#include <stddef.h> // para size_t
+#include <stddef.h> 
 
-// Protótipo da função de log
-void log_request(sem_t* log_sem, const char* client_ip, const char* method, const char* path, int status, size_t bytes);
+// Escreve uma entrada no access.log protegida por semáforo
+void log_request(sem_t* log_sem, int client_fd, const char* method, const char* path, int status, size_t bytes);
 
 #endif
