@@ -1,6 +1,7 @@
-// shared_mem.h
 #ifndef SHARED_MEM_H
 #define SHARED_MEM_H
+#include <time.h>
+
 #define MAX_QUEUE_SIZE 100
 
 typedef struct {
@@ -10,6 +11,10 @@ typedef struct {
     long status_404;
     long status_500;
     int active_connections;
+    
+    // Novos campos para Feature 3
+    double total_response_time_ms; // Acumulador de tempo (para calcular média)
+    time_t server_start_time;      // Para calcular Uptime
 } server_stats_t;
 
 typedef struct {
@@ -23,12 +28,10 @@ typedef struct {
     connection_queue_t queue;
     server_stats_t stats;
     
-    // --- VAGAS DO GINÁSIO ---
+    // Vagas do Ginásio
     int slots_A; 
     int slots_B;
     int slots_C;
-    // ------------------------
-
 } shared_data_t;
 
 shared_data_t* create_shared_memory();
