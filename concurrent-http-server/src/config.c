@@ -21,12 +21,24 @@ int load_config(const char* filename, server_config_t* config) {
 
             else if (strcmp(key, "NUM_WORKERS") == 0) config->num_workers = atoi(value);
             
-            else if (strcmp(key, "THREADS_PER_WORKER") == 0)
-                config->threads_per_worker = atoi(value);
+            else if (strcmp(key, "THREADS_PER_WORKER") == 0) config->threads_per_worker = atoi(value);
     
-            else if (strcmp(key, "DOCUMENT_ROOT") == 0)
-                strncpy(config->document_root, value, sizeof(config->document_root));
-    // Add other config parameters...
+            else if (strcmp(key, "DOCUMENT_ROOT") == 0) {strncpy(config->document_root, value, sizeof(config->document_root) - 1);
+
+            // Certifique-se de que a string de destino é terminada em nulo
+            config->document_root[sizeof(config->document_root) - 1] = '\0';}
+
+            else if (strcmp(key, "MAX_QUEUE_SIZE") == 0) config->max_queue_size = atoi(value);
+
+            else if (strcmp(key, "CACHE_SIZE_MB") == 0) config->cache_size_mb = atoi(value);
+
+            else if (strcmp(key, "LOG_FILE") == 0) {strncpy(config->log_file, value, sizeof(config->log_file) - 1);
+
+            // Certifique-se de que a string de destino é terminada em nulo
+                config->log_file[sizeof(config->log_file) - 1] = '\0';}
+
+            else if (strcmp(key, "TIMEOUT_SECONDS") == 0) config->timeout_seconds = atoi(value);
+
         }
     }
     fclose(fp);
